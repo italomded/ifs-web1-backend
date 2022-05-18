@@ -1,0 +1,1 @@
+INSERT INTO systems (name, status) VALUES ('Fórum', 1);
