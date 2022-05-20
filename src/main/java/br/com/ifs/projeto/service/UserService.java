@@ -13,7 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import br.com.ifs.projeto.config.security.TokenService;
-import br.com.ifs.projeto.dto.form.CreateUserForm;
+import br.com.ifs.projeto.dto.form.UserForm;
 import br.com.ifs.projeto.dto.form.LoginForm;
 import br.com.ifs.projeto.model.User;
 import br.com.ifs.projeto.repository.UserRepository;
@@ -62,15 +62,27 @@ public class UserService {
 		}
 	}
 
-	public Long create(CreateUserForm form) {
+	public Long create(UserForm form) {
 		User user = form.toUser();
 		try {
 			userRepository.save(user);
 		} catch (ConstraintViolationException exception) {
 			// criar filtro para essa exceção
+			// exception handler
+			// para os dto.form também
 			return null;
 		}
 		return user.getId();
+	}
+
+	public Boolean delete(Long id) {
+		User user = this.getOne(id);
+		if (user != null) {
+			userRepository.delete(user);
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 }

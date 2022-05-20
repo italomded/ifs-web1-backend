@@ -42,7 +42,7 @@ public class User implements UserDetails {
 	@Column(nullable = false)
 	private Boolean status;
 	
-	@Column(nullable=false)
+	@Column(nullable = false)
 	private LocalDate register;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "profile_id")

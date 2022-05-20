@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.ifs.projeto.dto.CreatedDTO;
 import br.com.ifs.projeto.dto.ErrorDTO;
-import br.com.ifs.projeto.dto.form.CreateUserForm;
+import br.com.ifs.projeto.dto.form.UserForm;
 import br.com.ifs.projeto.model.User;
 import br.com.ifs.projeto.service.UserService;
 
@@ -43,9 +44,9 @@ public class UserController {
 		}
 	}
 	
-	// publico
+	// logado
 	@PostMapping
-	public ResponseEntity<?> create(CreateUserForm form) {
+	public ResponseEntity<?> create(UserForm form) {
 		Long id = userService.create(form);
 		if (id == null) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorDTO("login", "Not unique"));
@@ -54,7 +55,14 @@ public class UserController {
 		}
 	}
 	
-	// faltando put
-	// adicionar profiles
+	@DeleteMapping("{id}")
+	public ResponseEntity<?> delete(@PathVariable String id) {
+		Boolean deleted = userService.delete(Long.parseLong(id));
+		if (deleted) {
+			return ResponseEntity.ok().build();
+		} else {
+			return ResponseEntity.badRequest().build();
+		}
+	}
 
 }

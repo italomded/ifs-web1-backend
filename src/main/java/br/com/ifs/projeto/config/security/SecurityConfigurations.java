@@ -47,6 +47,7 @@ public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
 			.and()
 				.authorizeRequests()
 					.anyRequest().permitAll()
+				// adicionar acessos de cada role
 			.and()
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()

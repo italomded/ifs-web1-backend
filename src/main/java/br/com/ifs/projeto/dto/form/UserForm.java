@@ -8,9 +8,8 @@ import javax.validation.constraints.NotNull;
 import br.com.ifs.projeto.model.User;
 import lombok.Getter;
 
-// nao tem email?
 @Getter
-public class CreateUserForm {
+public class UserForm {
 	
 	@NotNull @NotBlank
 	private String name;
