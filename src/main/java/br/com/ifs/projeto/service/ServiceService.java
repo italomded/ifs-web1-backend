@@ -58,4 +58,14 @@ public class ServiceService {
 		}
 	}
 	
+	public Boolean changeStatus(Long id) {
+		ModelService service = this.getOne(id);
+		if (service == null) {
+			return false;
+		}
+		service.setStatus(!service.getStatus());
+		serviceRepository.save(service);
+		return true;
+	}
+	
 }

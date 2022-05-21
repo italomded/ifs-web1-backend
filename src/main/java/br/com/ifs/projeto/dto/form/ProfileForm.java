@@ -11,12 +11,15 @@ public class ProfileForm {
 
 	@NotNull @NotBlank
 	private String name;
-	// acho q vai precisar de um regex aqui
 
 	public Profile toProfile() {
 		Profile profile = new Profile();
-		profile.setName(name);
 		profile.setStatus(true);
+		if (name.startsWith("ROLE_")) {
+			profile.setName(name);
+		} else {
+			profile.setName("ROLE_" + name);
+		}
 		return profile;
 	}
 	

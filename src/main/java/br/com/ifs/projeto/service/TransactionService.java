@@ -60,4 +60,14 @@ public class TransactionService {
 		}
 	}
 	
+	public Boolean changeStatus(Long id) {
+		Transaction transaction = this.getOne(id);
+		if (transaction == null) {
+			return false;
+		}
+		transaction.setStatus(!transaction.getStatus());
+		transactionRepository.save(transaction);
+		return true;
+	}
+	
 }

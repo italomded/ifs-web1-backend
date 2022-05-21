@@ -18,7 +18,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity(name="services")
-public class ModelService {
+public class ModelService implements Model {
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;

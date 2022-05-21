@@ -9,18 +9,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.ifs.projeto.dto.TokenDTO;
 import br.com.ifs.projeto.dto.form.LoginForm;
-import br.com.ifs.projeto.service.UserService;
+import br.com.ifs.projeto.service.AuthenticationService;
 
 @RestController
 @RequestMapping("authentication")
 public class AuthenticationController {
 
 	@Autowired
-	private UserService userService;
+	private AuthenticationService authenticationService;
 	
 	@PostMapping
 	public ResponseEntity<TokenDTO> login(LoginForm form) {
-		String token = userService.login(form);
+		String token = authenticationService.login(form);
 		if (token != null) {
 			return ResponseEntity.ok(new TokenDTO("Bearer", token));
 		} else {

@@ -45,4 +45,14 @@ public class SystemService {
 		return system.getId();
 	}
 	
+	public Boolean changeStatus(Long id) {
+		ModelSystem system = this.getOne(id);
+		if (system == null) {
+			return false;
+		}
+		system.setStatus(!system.getStatus());
+		systemRepository.save(system);
+		return true;
+	}
+	
 }

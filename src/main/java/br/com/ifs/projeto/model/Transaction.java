@@ -18,7 +18,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity(name="transactions")
-public class Transaction {
+public class Transaction implements Model {
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -36,6 +36,6 @@ public class Transaction {
 	private ModelService service;
 	
 	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "transactions")
-	private List<Profile> perfis = new ArrayList<>();
+	private List<Profile> profiles = new ArrayList<>();
 
 }

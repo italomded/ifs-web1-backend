@@ -22,7 +22,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity(name="profiles")
-public class Profile implements GrantedAuthority {
+public class Profile implements GrantedAuthority, Model {
 
 	private static final long serialVersionUID = 1L;
 
@@ -36,7 +36,7 @@ public class Profile implements GrantedAuthority {
 	private Boolean status;
 	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "user_id")
-	private List<UserAndProfile> users;
+	private List<UserAndProfile> users = new ArrayList<>();
 	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
@@ -47,7 +47,11 @@ public class Profile implements GrantedAuthority {
 
 	@Override
 	public String getAuthority() {
-		return this.name;
+		if (status) {
+			return this.name;
+		} else {
+			return null;
+		}
 	}
 	
 }

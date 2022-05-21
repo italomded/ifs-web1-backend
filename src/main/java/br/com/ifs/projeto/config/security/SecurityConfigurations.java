@@ -3,6 +3,7 @@ package br.com.ifs.projeto.config.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -13,6 +14,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import br.com.ifs.projeto.repository.LogRepository;
 import br.com.ifs.projeto.repository.UserRepository;
 
 @Configuration
@@ -27,6 +29,9 @@ public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
 	
 	@Autowired
 	private UserAuthenticationService userAuthService;
+	
+	@Autowired
+	private LogRepository logRepository;
 	
 	@Override
 	@Bean
@@ -46,13 +51,20 @@ public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
 			.headers().frameOptions().disable() // h2
 			.and()
 				.authorizeRequests()
-					.anyRequest().permitAll()
-				// adicionar acessos de cada role
+					// public
+					.antMatchers(HttpMethod.POST, "/user").permitAll()
+					.antMatchers("/authentication").permitAll()
+					// adm role
+					.antMatchers(HttpMethod.POST).hasRole("ADM")
+					.antMatchers(HttpMethod.DELETE).hasRole("ADM")
+					.antMatchers(HttpMethod.PUT).hasRole("ADM")
+					// logged
+					.anyRequest().authenticated()
 			.and()
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()
 				.addFilterBefore(
-						new AuthenticationTokenFilter(tokenService, userRepository), 
+						new AuthenticationTokenFilter(tokenService, userRepository, logRepository), 
 						UsernamePasswordAuthenticationFilter.class
 						);
 	}

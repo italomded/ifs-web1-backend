@@ -3,29 +3,15 @@ package br.com.ifs.projeto.service;
 import java.util.List;
 import java.util.Optional;
 
-import javax.validation.ConstraintViolationException;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import br.com.ifs.projeto.config.security.TokenService;
 import br.com.ifs.projeto.dto.form.UserForm;
-import br.com.ifs.projeto.dto.form.LoginForm;
 import br.com.ifs.projeto.model.User;
 import br.com.ifs.projeto.repository.UserRepository;
 
 @Service
 public class UserService {
-
-	@Autowired
-	private AuthenticationManager authenticationManager;
-	
-	@Autowired
-	private TokenService tokenService;
 	
 	@Autowired
 	private UserRepository userRepository;
@@ -35,16 +21,6 @@ public class UserService {
 		if (optUser.isPresent()) {
 			return optUser.get();
 		} else {
-			return null;
-		}
-	}
-
-	public String login(LoginForm form) {
-		UsernamePasswordAuthenticationToken loginData = new UsernamePasswordAuthenticationToken(form.getLogin(), form.getPassword());
-		try {
-			Authentication authentication = authenticationManager.authenticate(loginData);
-			return tokenService.generateToken(authentication);
-		} catch (BadCredentialsException exception) {
 			return null;
 		}
 	}
@@ -64,14 +40,8 @@ public class UserService {
 
 	public Long create(UserForm form) {
 		User user = form.toUser();
-		try {
-			userRepository.save(user);
-		} catch (ConstraintViolationException exception) {
-			// criar filtro para essa exceção
-			// exception handler
-			// para os dto.form também
-			return null;
-		}
+		//DataIntegrityViolationException
+		userRepository.save(user);
 		return user.getId();
 	}
 
@@ -83,6 +53,16 @@ public class UserService {
 		} else {
 			return false;
 		}
+	}
+	
+	public Boolean changeStatus(Long id) {
+		User user = this.getOne(id);
+		if (user == null) {
+			return false;
+		}
+		user.setStatus(!user.getStatus());
+		userRepository.save(user);
+		return true;
 	}
 	
 }

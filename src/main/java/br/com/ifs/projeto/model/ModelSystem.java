@@ -1,5 +1,6 @@
 package br.com.ifs.projeto.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -16,7 +17,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity(name = "systems")
-public class ModelSystem {
+public class ModelSystem implements Model {
 	
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -28,6 +29,6 @@ public class ModelSystem {
 	private Boolean status;
 	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "system")
-	private List<ModelService> services;
+	private List<ModelService> services = new ArrayList<>();
 	
 }
