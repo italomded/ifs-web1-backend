@@ -1,16 +1,21 @@
 package br.com.ifs.projeto.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import br.com.ifs.projeto.dto.form.TransactionForm;
 import br.com.ifs.projeto.model.ModelService;
+import br.com.ifs.projeto.model.Profile;
 import br.com.ifs.projeto.model.Transaction;
+import br.com.ifs.projeto.model.User;
 import br.com.ifs.projeto.repository.ServiceRepository;
 import br.com.ifs.projeto.repository.TransactionRepository;
 
@@ -30,7 +35,23 @@ public class TransactionService {
 	public Transaction getOne(Long id) {
 		Optional<Transaction> optTransaction = transactionRepository.findById(id);
 		if (optTransaction.isPresent()) {
-			return optTransaction.get();
+			User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			
+			List<Profile> userProfiles = new ArrayList<>();
+			user.getProfiles().forEach(p -> userProfiles.add(p.getProfile()));
+			Transaction transaction = optTransaction.get();
+			Set<Profile> tranProfiles = transaction.getProfiles();
+			
+			for (Profile uProfile : userProfiles) {
+				for (Profile tProfile : tranProfiles) {
+					if (tProfile.getId() == uProfile.getId()) {
+						return transaction;
+					}
+				}
+			}
+			
+			transaction.setUrl("ACCESS DENIED");
+			return transaction;
 		} else {
 			return null;
 		}
@@ -39,6 +60,10 @@ public class TransactionService {
 	public Boolean delete(Long id) {
 		Transaction transaction = this.getOne(id);
 		if (transaction != null) {
+			transaction.getProfiles().removeIf(p -> {
+				p.getTransactions().removeIf(t -> t.getId() == transaction.getId());
+				return true;
+			});
 			transactionRepository.delete(transaction);
 			return true;
 		} else {

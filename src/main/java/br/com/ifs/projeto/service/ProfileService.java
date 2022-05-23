@@ -1,6 +1,7 @@
 package br.com.ifs.projeto.service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,6 +15,7 @@ import br.com.ifs.projeto.model.Profile;
 import br.com.ifs.projeto.model.Transaction;
 import br.com.ifs.projeto.model.User;
 import br.com.ifs.projeto.model.UserAndProfile;
+import br.com.ifs.projeto.model.UserAndProfileKey;
 import br.com.ifs.projeto.repository.ProfileRepository;
 import br.com.ifs.projeto.repository.TransactionRepository;
 import br.com.ifs.projeto.repository.UserAndProfileRepository;
@@ -56,7 +58,20 @@ public class ProfileService {
 	public Boolean delete(Long id) {
 		Profile profile = this.getOne(id);
 		if (profile != null) {
-			profileRepository.delete(profile);
+			List<UserAndProfileKey> upId = new ArrayList<>();
+			profile.getUsers().removeIf(up -> {
+				upId.add(up.getId());
+				User user = up.getUser();
+				user.getProfiles().removeIf(up2 -> up2.getId() == up.getId());
+				userRepository.save(user);
+				return true;
+			});
+			upId.forEach(up -> userAndProfileRepository.deleteById(up));
+			profile.getTransactions().removeIf(t -> {
+				t.getProfiles().removeIf(p -> p.getId() == profile.getId());
+				return true;
+			});
+			profileRepository.deleteById(profile.getId());
 			return true;
 		} else {
 			return false;
@@ -128,8 +143,8 @@ public class ProfileService {
 		}
 		
 		UserAndProfile userAndProfile = new UserAndProfile();
-		userAndProfile.setProfile_id(profile);
-		userAndProfile.setUser_id(user);
+		userAndProfile.setProfile(profile);
+		userAndProfile.setUser(user);
 		userAndProfile.setStart(LocalDate.now());
 		
 		profile.getUsers().add(userAndProfile);
@@ -155,8 +170,8 @@ public class ProfileService {
 			return false;
 		}
 		
-		profile.getUsers().removeIf(u -> u.getProfile_id().getId() == profile.getId());
-		user.getProfiles().removeIf(p -> p.getUser_id().getId() == user.getId());
+		profile.getUsers().removeIf(u -> u.getProfile().getId() == profile.getId());
+		user.getProfiles().removeIf(p -> p.getUser().getId() == user.getId());
 		
 		UserAndProfile userAndProfile = optUP.get();
 		userAndProfile.setEnd(LocalDate.now());
@@ -172,7 +187,9 @@ public class ProfileService {
 		if (profile == null) {
 			return false;
 		}
-		profile.setStatus(!profile.getStatus());
+		Boolean status = profile.getStatus();
+		status = !status;
+		profile.setStatus(status);
 		profileRepository.save(profile);
 		return true;
 	}

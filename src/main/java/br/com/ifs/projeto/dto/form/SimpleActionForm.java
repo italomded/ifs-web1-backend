@@ -1,17 +1,22 @@
 package br.com.ifs.projeto.dto.form;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class SimpleActionForm {
 
-	@NotNull @NotBlank
-	private Long MainResourceId;
+	@NotNull
+	private Long mainResourceId;
 	
-	@NotNull @NotBlank
-	private Long SubResourceId;
+	@NotNull
+	private Long subResourceId;
 	
 }

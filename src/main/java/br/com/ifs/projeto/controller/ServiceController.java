@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -49,7 +50,7 @@ public class ServiceController {
 
 	@Transactional
 	@PostMapping
-	public ResponseEntity<CreatedDTO> create(@Valid ServiceForm form) {
+	public ResponseEntity<CreatedDTO> create(@RequestBody @Valid ServiceForm form) {
 		Long idCreated = serviceService.create(form);
 		if (idCreated != null) {
 			// CreatedDTO

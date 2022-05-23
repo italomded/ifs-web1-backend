@@ -17,7 +17,7 @@ public class ModelSystemDTO {
 		this.id = system.getId();
 		this.name = system.getName();
 		this.status = system.getStatus();
-		this.services = system.getServices().stream().map(ModelDTO::new).toList(); //pode dar pau
+		this.services = system.getServices().stream().map(ModelDTO::new).toList();
 	}
 
 }

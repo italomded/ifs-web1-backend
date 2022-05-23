@@ -54,6 +54,8 @@ public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
 					// public
 					.antMatchers(HttpMethod.POST, "/user").permitAll()
 					.antMatchers("/authentication").permitAll()
+					.antMatchers("/h2-console/**").permitAll()
+					.antMatchers("/system").permitAll()
 					// adm role
 					.antMatchers(HttpMethod.POST).hasRole("ADM")
 					.antMatchers(HttpMethod.DELETE).hasRole("ADM")
@@ -73,5 +75,10 @@ public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
 	public void configure(WebSecurity web) throws Exception {
 		super.configure(web);
 	}
+	
+//	public static void main(String[] args) {
+//		BCryptPasswordEncoder bp = new BCryptPasswordEncoder();
+//		System.out.println(bp.encode("12345"));
+//	}
 
 }

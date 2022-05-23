@@ -1,8 +1,9 @@
 package br.com.ifs.projeto.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -32,8 +33,8 @@ public class ModelService implements Model {
 	@Column(nullable = false)
 	private Boolean status;
 	
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "service")
-	private List<Transaction> transactions = new ArrayList<>();
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "service", cascade = CascadeType.ALL)
+	private Set<Transaction> transactions = new HashSet<>();
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	private ModelSystem system;

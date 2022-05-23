@@ -19,13 +19,13 @@ public class ModelDTO {
 	
 	public ModelDTO(UserAndProfile model, String side) {
 		if (side.equals("user")) {
-			this.id = model.getProfile_id().getId();
-			this.name = model.getProfile_id().getName();
-			this.status = model.getProfile_id().getStatus();
+			this.id = model.getProfile().getId();
+			this.name = model.getProfile().getName();
+			this.status = model.getProfile().getStatus();
 		} else {
-			this.id = model.getUser_id().getId();
-			this.name = model.getUser_id().getName();
-			this.status = model.getUser_id().getStatus();
+			this.id = model.getUser().getId();
+			this.name = model.getUser().getName();
+			this.status = model.getUser().getStatus();
 		}
 	}
 }

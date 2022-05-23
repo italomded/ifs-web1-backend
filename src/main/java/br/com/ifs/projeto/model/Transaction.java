@@ -1,7 +1,7 @@
 package br.com.ifs.projeto.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -36,6 +36,6 @@ public class Transaction implements Model {
 	private ModelService service;
 	
 	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "transactions")
-	private List<Profile> profiles = new ArrayList<>();
+	private Set<Profile> profiles = new HashSet<>();
 
 }

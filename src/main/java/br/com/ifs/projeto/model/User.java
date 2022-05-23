@@ -1,10 +1,9 @@
 package br.com.ifs.projeto.model;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -45,12 +44,12 @@ public class User implements UserDetails, Model {
 	@Column(nullable = false)
 	private LocalDate register;
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "profile_id")
-	private List<UserAndProfile> profiles = new ArrayList<>();
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
+	private Set<UserAndProfile> profiles = new HashSet<>();
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return profiles.stream().map(p -> p.getProfile_id()).collect(Collectors.toList());
+		return profiles.stream().map(p -> p.getProfile()).toList();
 	}
 
 	@Override

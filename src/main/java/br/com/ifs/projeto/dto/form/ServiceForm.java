@@ -4,9 +4,15 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import br.com.ifs.projeto.model.ModelService;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ServiceForm {
 
 	@NotBlank @NotNull
@@ -15,7 +21,7 @@ public class ServiceForm {
 	@NotBlank @NotNull
 	private String url;
 	
-	@NotBlank @NotNull
+	@NotNull
 	private Long systemId;
 	
 	public ModelService toService() {

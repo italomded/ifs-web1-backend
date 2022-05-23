@@ -16,7 +16,7 @@ import br.com.ifs.projeto.model.User;
 @Service
 public class TokenService {
 	
-	private final Long expiration = 300000L;
+	private final Long expiration = 3600000L;
 	private final String secret = "afojsapgjsaopgsapgsoapjgposjaopgas";
 	private final String issuer = "Projeto API";
 	private final Algorithm algorithm = Algorithm.HMAC256(this.secret);

@@ -17,6 +17,7 @@ public class ProfileDTO {
 	public ProfileDTO(Profile profile) {
 		this.id = profile.getId();
 		this.name = profile.getName();
+		this.status = profile.getStatus();
 		this.users = profile.getUsers().stream().map(u -> new ModelDTO(u, "profile")).toList();
 		this.transactions = profile.getTransactions().stream().map(ModelDTO::new).toList();
 	}

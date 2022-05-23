@@ -4,13 +4,17 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import br.com.ifs.projeto.model.ModelSystem;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-public class SystemForm {
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
-private Long id;
-	
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class SystemForm {
+
 	@NotBlank @NotNull
 	private String name;
 	

@@ -1,8 +1,9 @@
 package br.com.ifs.projeto.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -35,15 +36,15 @@ public class Profile implements GrantedAuthority, Model {
 	@Column(nullable = false)
 	private Boolean status;
 	
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "user_id")
-	private List<UserAndProfile> users = new ArrayList<>();
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "profile", cascade = CascadeType.ALL)
+	private Set<UserAndProfile> users = new HashSet<>();
 	
-	@ManyToMany(fetch = FetchType.LAZY)
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinTable(
 			  name = "profile_transaction", 
 			  joinColumns = @JoinColumn(name = "profile_id"), 
 			  inverseJoinColumns = @JoinColumn(name = "transaction_id"))
-	private List<Transaction> transactions = new ArrayList<>();
+	private Set<Transaction> transactions = new HashSet<>();
 
 	@Override
 	public String getAuthority() {
