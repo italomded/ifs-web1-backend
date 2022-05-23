@@ -10,14 +10,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @Entity(name="user_profile")
-@EqualsAndHashCode
 public class UserAndProfile {
 
 	@EmbeddedId
@@ -39,12 +39,20 @@ public class UserAndProfile {
 	@Column
 	private LocalDate end;
 	
+	public void setUserAndProfileId(Long profileId, Long userId) {
+		id = new UserAndProfileKey();
+		id.setProfileId(profileId);
+		id.setUserId(userId);
+	}
+	
 	public Profile getProfile() {
 		if (end == null) {
 			return this.profile;
 		} else {
 			Profile profile = new Profile();
 			profile.setName("EMPTY");
+			profile.setStatus(false);
+			profile.setId(this.profile.getId());
 			return profile;
 		}
 	}

@@ -10,7 +10,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import br.com.ifs.projeto.dto.form.ProfileForm;
-import br.com.ifs.projeto.dto.form.SimpleActionForm;
+import br.com.ifs.projeto.dto.form.ProfileTransactionForm;
+import br.com.ifs.projeto.dto.form.ProfileUserForm;
 import br.com.ifs.projeto.model.Profile;
 import br.com.ifs.projeto.model.Transaction;
 import br.com.ifs.projeto.model.User;
@@ -51,6 +52,9 @@ public class ProfileService {
 
 	public Long create(ProfileForm form) {
 		Profile profile = form.toProfile();
+		if (profile.getName().equals("EMPTY")) {
+			return null;
+		}
 		profileRepository.save(profile);
 		return profile.getId();
 	}
@@ -78,9 +82,9 @@ public class ProfileService {
 		}	
 	}
 
-	public Boolean addTransaction(SimpleActionForm form) {
-		Optional<Profile> optProfile = profileRepository.findById(form.getMainResourceId());
-		Optional<Transaction> optTransaction = transactionRepository.findById(form.getSubResourceId());
+	public Boolean addTransaction(ProfileTransactionForm form) {
+		Optional<Profile> optProfile = profileRepository.findById(form.getProfileId());
+		Optional<Transaction> optTransaction = transactionRepository.findById(form.getTransactionId());
 		
 		if (optProfile.isEmpty() || optTransaction.isEmpty()) {
 			return false;
@@ -100,9 +104,9 @@ public class ProfileService {
 		}
 	}
 
-	public Boolean removeTransaction(SimpleActionForm form) {
-		Optional<Profile> optProfile = profileRepository.findById(form.getMainResourceId());
-		Optional<Transaction> optTransaction = transactionRepository.findById(form.getSubResourceId());
+	public Boolean removeTransaction(ProfileTransactionForm form) {
+		Optional<Profile> optProfile = profileRepository.findById(form.getProfileId());
+		Optional<Transaction> optTransaction = transactionRepository.findById(form.getTransactionId());
 		
 		if (optProfile.isEmpty() || optTransaction.isEmpty()) {
 			return false;
@@ -118,9 +122,9 @@ public class ProfileService {
 		return true;
 	}
 
-	public Boolean addRole(SimpleActionForm form) {
-		Optional<Profile> optProfile = profileRepository.findById(form.getMainResourceId());
-		Optional<User> optUser = userRepository.findById(form.getSubResourceId());
+	public Boolean addRole(ProfileUserForm form) {
+		Optional<Profile> optProfile = profileRepository.findById(form.getProfileId());
+		Optional<User> optUser = userRepository.findById(form.getUserId());
 		
 		if (optProfile.isEmpty() || optUser.isEmpty()) {
 			return false;
@@ -133,8 +137,8 @@ public class ProfileService {
 		if (optUP.isPresent()) {
 			UserAndProfile userAndProfile = optUP.get();
 			if (userAndProfile.getEnd() != null) {
-				userAndProfile.setStart(LocalDate.now());
 				userAndProfile.setEnd(null);
+				userAndProfile.setStart(LocalDate.now());
 				userAndProfileRepository.save(userAndProfile);
 				return true;
 			} else {
@@ -143,20 +147,20 @@ public class ProfileService {
 		}
 		
 		UserAndProfile userAndProfile = new UserAndProfile();
+		userAndProfile.setUserAndProfileId(profile.getId(), user.getId());
 		userAndProfile.setProfile(profile);
 		userAndProfile.setUser(user);
 		userAndProfile.setStart(LocalDate.now());
 		
-		profile.getUsers().add(userAndProfile);
 		user.getProfiles().add(userAndProfile);
 		
 		userAndProfileRepository.save(userAndProfile);
 		return true;
 	}
 
-	public Boolean removeRole(SimpleActionForm form) {
-		Optional<Profile> optProfile = profileRepository.findById(form.getMainResourceId());
-		Optional<User> optUser = userRepository.findById(form.getSubResourceId());
+	public Boolean removeRole(ProfileUserForm form) {
+		Optional<Profile> optProfile = profileRepository.findById(form.getProfileId());
+		Optional<User> optUser = userRepository.findById(form.getUserId());
 		
 		if (optProfile.isEmpty() || optUser.isEmpty()) {
 			return false;

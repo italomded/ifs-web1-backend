@@ -11,12 +11,12 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SimpleActionForm {
+public class ProfileUserForm {
 
 	@NotNull
-	private Long mainResourceId;
+	private Long profileId;
 	
 	@NotNull
-	private Long subResourceId;
+	private Long userId;
 	
 }

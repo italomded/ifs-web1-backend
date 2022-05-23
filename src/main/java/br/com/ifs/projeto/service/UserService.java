@@ -3,15 +3,14 @@ package br.com.ifs.projeto.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import br.com.ifs.projeto.dto.form.UserForm;
 import br.com.ifs.projeto.model.Profile;
 import br.com.ifs.projeto.model.User;
-import br.com.ifs.projeto.model.UserAndProfile;
 import br.com.ifs.projeto.model.UserAndProfileKey;
 import br.com.ifs.projeto.repository.ProfileRepository;
 import br.com.ifs.projeto.repository.UserAndProfileRepository;
@@ -44,14 +43,15 @@ public class UserService {
 	
 	public User getOne(Long id) {
 		Optional<User> optUser = userRepository.findById(id);
-		Set<UserAndProfile> UnP = userAndProfileRepository.findByUser_Id(id);
 		if (optUser.isPresent()) {
 			User user = optUser.get();
-			user.setProfiles(UnP);
-			return user;
-		} else {
-			return null;
+			User userLogged = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			Boolean isAdm = userLogged.getAuthorities().stream().anyMatch(p -> p.getAuthority().equals("ROLE_ADM"));
+			if (user.getId() == userLogged.getId() || isAdm) {
+				return user;
+			}
 		}
+		return null;
 	}
 
 	public Long create(UserForm form) {

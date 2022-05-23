@@ -18,9 +18,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.ifs.projeto.dto.CreatedDTO;
+import br.com.ifs.projeto.dto.ErrorDTO;
 import br.com.ifs.projeto.dto.ProfileDTO;
 import br.com.ifs.projeto.dto.form.ProfileForm;
-import br.com.ifs.projeto.dto.form.SimpleActionForm;
+import br.com.ifs.projeto.dto.form.ProfileTransactionForm;
+import br.com.ifs.projeto.dto.form.ProfileUserForm;
 import br.com.ifs.projeto.model.Profile;
 import br.com.ifs.projeto.service.ProfileService;
 
@@ -53,7 +55,11 @@ public class ProfileController {
 	@PostMapping
 	public ResponseEntity<?> create(@RequestBody @Valid ProfileForm form) {
 		Long idCreated = profileService.create(form);
-		return ResponseEntity.created(URI.create("profile/" + idCreated)).body(new CreatedDTO(idCreated));
+		if (idCreated == null) {
+			return ResponseEntity.badRequest().body(new ErrorDTO("name", "Invalid name"));
+		} else {
+			return ResponseEntity.created(URI.create("profile/" + idCreated)).body(new CreatedDTO(idCreated));
+		}
 	}
 	
 	
@@ -67,11 +73,22 @@ public class ProfileController {
 		}
 	}
 	
-	@Transactional
+	//
+	
 	@PutMapping("user")
-	public ResponseEntity<?> addRole(@RequestBody @Valid SimpleActionForm form) {
+	public ResponseEntity<?> addRole(@RequestBody @Valid ProfileUserForm form) {
 		Boolean added = profileService.addRole(form);
 		if (added) {
+			return ResponseEntity.ok().build();
+		} else {
+			return ResponseEntity.badRequest().build();
+		}
+	}
+	
+	@DeleteMapping("user")
+	public ResponseEntity<?> removerRole(@Valid @RequestBody ProfileUserForm form) {
+		Boolean removed = profileService.removeRole(form);
+		if (removed) {
 			return ResponseEntity.ok().build();
 		} else {
 			return ResponseEntity.badRequest().build();
@@ -89,21 +106,8 @@ public class ProfileController {
 		}
 	}
 	
-	
-	@Transactional
-	@DeleteMapping("user")
-	public ResponseEntity<?> removerRole(@Valid @RequestBody SimpleActionForm form) {
-		Boolean removed = profileService.removeRole(form);
-		if (removed) {
-			return ResponseEntity.ok().build();
-		} else {
-			return ResponseEntity.badRequest().build();
-		}
-	}
-	
-	@Transactional
 	@PutMapping("transaction")
-	public ResponseEntity<?> addTransaction(@RequestBody @Valid SimpleActionForm form) {
+	public ResponseEntity<?> addTransaction(@RequestBody @Valid ProfileTransactionForm form) {
 		Boolean added = profileService.addTransaction(form);
 		if (added) {
 			return ResponseEntity.ok().build();
@@ -112,9 +116,8 @@ public class ProfileController {
 		}
 	}
 	
-	@Transactional
 	@DeleteMapping("transaction")
-	public ResponseEntity<?> removeTransaction(@RequestBody @Valid SimpleActionForm form) {
+	public ResponseEntity<?> removeTransaction(@RequestBody @Valid ProfileTransactionForm form) {
 		Boolean removed = profileService.removeTransaction(form);
 		if (removed) {
 			return ResponseEntity.ok().build();

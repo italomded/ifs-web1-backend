@@ -14,6 +14,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import br.com.ifs.projeto.config.LogFilter;
 import br.com.ifs.projeto.repository.LogRepository;
 import br.com.ifs.projeto.repository.UserRepository;
 
@@ -55,8 +56,9 @@ public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
 					.antMatchers(HttpMethod.POST, "/user").permitAll()
 					.antMatchers("/authentication").permitAll()
 					.antMatchers("/h2-console/**").permitAll()
-					.antMatchers("/system").permitAll()
 					// adm role
+					.antMatchers(HttpMethod.GET, "/user").hasRole("ADM")
+					.antMatchers("/log").hasRole("ADM")
 					.antMatchers(HttpMethod.POST).hasRole("ADM")
 					.antMatchers(HttpMethod.DELETE).hasRole("ADM")
 					.antMatchers(HttpMethod.PUT).hasRole("ADM")
@@ -66,9 +68,10 @@ public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()
 				.addFilterBefore(
-						new AuthenticationTokenFilter(tokenService, userRepository, logRepository), 
+						new AuthenticationTokenFilter(tokenService, userRepository), 
 						UsernamePasswordAuthenticationFilter.class
-						);
+						)
+				.addFilterAfter(new LogFilter(logRepository), UsernamePasswordAuthenticationFilter.class);
 	}
 	
 	@Override

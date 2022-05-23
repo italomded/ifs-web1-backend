@@ -30,7 +30,6 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 
-	// somente para adm
 	@GetMapping
 	public ResponseEntity<List<UserDTO>> getAll() {
 		List<User> userList = userService.getAll();
@@ -38,7 +37,6 @@ public class UserController {
 		return ResponseEntity.ok(userResponse);
 	}
 
-	// somente para adm e o proprio usuario
 	@GetMapping("{id}")
 	public ResponseEntity<UserDTO> getOne(@PathVariable String id) {
 		User user = userService.getOne(Long.parseLong(id));
@@ -49,7 +47,6 @@ public class UserController {
 		}
 	}
 
-	// logado
 	@Transactional
 	@PostMapping
 	public ResponseEntity<CreatedDTO> create(@RequestBody @Valid UserForm form) {
