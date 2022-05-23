@@ -7,6 +7,7 @@ import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,7 +52,11 @@ public class UserController {
 	@PostMapping
 	public ResponseEntity<CreatedDTO> create(@RequestBody @Valid UserForm form) {
 		Long idCreated = userService.create(form);
-		return ResponseEntity.created(URI.create("user/" + idCreated)).body(new CreatedDTO(idCreated));
+		if (idCreated != null) {
+			return ResponseEntity.created(URI.create("user/" + idCreated)).body(new CreatedDTO(idCreated));
+		} else {
+			return ResponseEntity.status(HttpStatus.CONFLICT).build();
+		}
 	}
 
 	@DeleteMapping("{id}")

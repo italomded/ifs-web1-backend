@@ -56,9 +56,13 @@ public class UserService {
 
 	public Long create(UserForm form) {
 		User user = form.toUser();
-		//DataIntegrityViolationException
-		userRepository.save(user);
-		return user.getId();
+		Optional<User> optUser = userRepository.findByLogin(user.getLogin());
+		if (optUser.isPresent()) {
+			return null;
+		} else {
+			userRepository.save(user);
+			return user.getId();
+		}
 	}
 
 	public Boolean delete(Long id) {
