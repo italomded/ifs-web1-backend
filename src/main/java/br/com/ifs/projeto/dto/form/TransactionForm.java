@@ -21,7 +21,7 @@ public class TransactionForm {
 	@NotBlank @NotNull
 	private String url;
 	
-	@NotBlank @NotNull
+	@NotNull
 	private Long serviceId;
 	
 	public Transaction toTransaction() {
