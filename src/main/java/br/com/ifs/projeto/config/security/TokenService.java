@@ -3,6 +3,9 @@ package br.com.ifs.projeto.config.security;
 
 import java.util.Date;
 
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -16,11 +19,21 @@ import br.com.ifs.projeto.model.User;
 @Service
 public class TokenService {
 	
-	private final Long expiration = 3600000L;
-	private final String secret = "afojsapgjsaopgsapgsoapjgposjaopgas";
+	@Value( "${projeto.jwt.expiration}" )
+	private Long expiration;
+	
+	@Value( "${projeto.jwt.secret}" )
+	private String secret;
+	
 	private final String issuer = "Projeto API";
-	private final Algorithm algorithm = Algorithm.HMAC256(this.secret);
-	private final JWTVerifier verifier = JWT.require(this.algorithm).withIssuer(this.issuer).build();
+	private Algorithm algorithm;
+	private JWTVerifier verifier;
+	
+	@PostConstruct
+	public void addValue() {
+		this.algorithm = Algorithm.HMAC256(this.secret);
+		this.verifier = JWT.require(this.algorithm).withIssuer(this.issuer).build();
+	}
 	
 	public String generateToken(Authentication authentication) {
 		User logged = (User) authentication.getPrincipal();
