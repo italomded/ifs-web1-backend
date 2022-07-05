@@ -46,7 +46,14 @@ public class UserService {
 		if (optUser.isPresent()) {
 			User user = optUser.get();
 			User userLogged = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-			Boolean isAdm = userLogged.getAuthorities().stream().anyMatch(p -> p.getAuthority().equals("ROLE_ADM"));
+			Boolean isAdm = userLogged.getAuthorities().stream().anyMatch(
+				p -> {
+					if (p.getAuthority() != null) {
+							return p.getAuthority().equals("ROLE_ADM");
+						}
+					return false;
+					}
+				);
 			if (user.getId() == userLogged.getId() || isAdm) {
 				return user;
 			}

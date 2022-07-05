@@ -6,6 +6,7 @@ import java.util.Date;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -17,13 +18,14 @@ import com.auth0.jwt.interfaces.JWTVerifier;
 import br.com.ifs.projeto.model.User;
 
 @Service
+@PropertySource(value = {"classpath:application.properties"})
 public class TokenService {
-	
-	@Value( "${projeto.jwt.expiration}" )
-	private Long expiration;
 	
 	@Value( "${projeto.jwt.secret}" )
 	private String secret;
+	
+	@Value( "${projeto.jwt.expiration}" )
+	private Long expiration;
 	
 	private final String issuer = "Projeto API";
 	private Algorithm algorithm;
@@ -31,6 +33,7 @@ public class TokenService {
 	
 	@PostConstruct
 	public void addValue() {
+		System.out.println(secret);
 		this.algorithm = Algorithm.HMAC256(this.secret);
 		this.verifier = JWT.require(this.algorithm).withIssuer(this.issuer).build();
 	}
