@@ -3,6 +3,7 @@ package br.com.ifs.projeto.model;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -49,7 +50,11 @@ public class User implements UserDetails, Model {
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return profiles.stream().map(p -> p.getProfile()).toList();
+		profiles.removeIf(p -> {
+			return p.getEnd() != null;
+		});
+		List<Profile> list = profiles.stream().map(p -> p.getProfile()).toList();
+		return list;
 	}
 
 	@Override

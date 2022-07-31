@@ -29,7 +29,23 @@ public class TransactionService {
 	private ServiceRepository serviceRepository;
 	
 	public List<Transaction> getAll() {
-		return transactionRepository.findAll();
+		List<Transaction> transactionList = transactionRepository.findAll();
+		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		List<Profile> userProfiles = new ArrayList<>();
+		user.getProfiles().forEach(p -> userProfiles.add(p.getProfile()));
+
+		transactionList.forEach(element -> {
+			Set<Profile> tranProfiles = element.getProfiles();
+			
+			boolean haveProfile = haveSameProfile(userProfiles, tranProfiles);
+			
+				if (!haveProfile) {
+					element.setUrl("ACCESS DENIED");
+				}
+			
+		});
+
+		return transactionList;
 	}
 	
 	public Transaction getOne(Long id) {
@@ -42,12 +58,9 @@ public class TransactionService {
 			Transaction transaction = optTransaction.get();
 			Set<Profile> tranProfiles = transaction.getProfiles();
 			
-			for (Profile uProfile : userProfiles) {
-				for (Profile tProfile : tranProfiles) {
-					if (tProfile.getId() == uProfile.getId()) {
-						return transaction;
-					}
-				}
+			boolean haveProfile = haveSameProfile(userProfiles, tranProfiles);
+			if (haveProfile) {
+				return transaction;
 			}
 			
 			transaction.setUrl("ACCESS DENIED");
@@ -55,6 +68,18 @@ public class TransactionService {
 		} else {
 			return null;
 		}
+	}
+
+	public boolean haveSameProfile(List<Profile> profilesA, Set<Profile> profilesB) {
+		for (Profile uProfile : profilesA) {
+			for (Profile tProfile : profilesB) {
+				if (tProfile.getId() == uProfile.getId()) {
+					if (!tProfile.getStatus()) return false;
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	
 	public Boolean delete(Long id) {
