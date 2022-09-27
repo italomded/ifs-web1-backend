@@ -62,6 +62,8 @@ public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
 					.antMatchers(HttpMethod.POST).hasRole("ADM")
 					.antMatchers(HttpMethod.DELETE).hasRole("ADM")
 					.antMatchers(HttpMethod.PUT).hasRole("ADM")
+					// springdoc
+					.antMatchers("/api-docs/**").permitAll()
 					// logged
 					.anyRequest().authenticated()
 			.and()
